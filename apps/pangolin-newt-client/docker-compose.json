@@ -1,0 +1,14 @@
+{
+  "services": [
+    {
+      "name": "pangolin-newt-client",
+      "image": "fosrl/newt:1.1.3",
+      "environment": {
+        "PANGOLIN_ENDPOINT": "${PANGOLIN_ENDPOINT}",
+        "NEWT_ID": "${NEWT_ID}",
+        "NEWT_SECRET": "${NEWT_SECRET}"
+      },
+      "networkMode": "host"
+    }
+  ]
+}
