@@ -18,7 +18,7 @@
       "type": "random",
       "label": "PostreSQL database password for Airtrail",
       "min": 32,
-      "env_variable": "DB_PASSWORD",
+      "env_variable": "POSTGRES_PASSWORD",
       "required": true
     }
   ],
