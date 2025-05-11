@@ -1,0 +1,29 @@
+{
+  "name": "Airtrail",
+  "id": "airtrail",
+  "available": true,
+  "short_desc": "Trace flights and view flight history.",
+  "dynamic_config": true,
+  "port": 7318,
+  "author": "C",
+  "categories": ["utilities"],
+  "description": "A web application that allows users to track their flights and view their flight history. ",
+  "tipi_version": 1,
+  "version": "2.4.1",
+  "website": "https://airtrail.johan.ohly.dk/",
+  "source": "https://github.com/JohanOhly/AirTrail",
+  "exposable": true,
+  "form_fields": [
+    {
+      "type": "random",
+      "label": "PostreSQL database password for Airtrail",
+      "min": 32,
+      "env_variable": "DB_PASSWORD",
+      "required": true
+    }
+  ],
+  "supported_architectures": ["arm64", "amd64"],
+  "created_at": 1746850482005,
+  "updated_at": 1746850482005,
+  "deprecated": false
+}

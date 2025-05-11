@@ -1,0 +1,63 @@
+version: "3.9"
+services:
+  airtrail-postgres:
+    container_name: airtrail-postgres
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      DB_URL: postgres://airtrail:${POSTGRES_PASSWORD}@airtrail-postgres:5432/airtrail
+      POSTGRES_DB: airtrail
+      POSTGRES_USER: airtrail
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - ${APP_DATA_DIR}/data/db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE_NAME}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - tipi_main_network
+    labels:
+      runtipi.managed: true
+  airtrail:
+    container_name: airtrail
+    image: johly/airtrail:2.4.1
+    restart: unless-stopped
+    environment:
+      ORIGIN: http://localhost:${APP_PORT}
+      DB_URL: postgres://airtrail:${POSTGRES_PASSWORD}@airtrail-postgres:5432/airtrail
+    depends_on:
+      airtrail-postgres:
+        condition: service_healthy
+    networks:
+      - tipi_main_network
+    labels:
+      # Main
+      traefik.enable: true
+      traefik.http.middlewares.airtrail-web-redirect.redirectscheme.scheme: https
+      traefik.http.services.airtrail.loadbalancer.server.port: ${APP_PORT}
+      # Web
+      traefik.http.routers.airtrail-insecure.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.airtrail-insecure.entrypoints: web
+      traefik.http.routers.airtrail-insecure.service: airtrail
+      traefik.http.routers.airtrail-insecure.middlewares: airtrail-web-redirect
+      # Websecure
+      traefik.http.routers.airtrail.rule: Host(`${APP_DOMAIN}`)
+      traefik.http.routers.airtrail.entrypoints: websecure
+      traefik.http.routers.airtrail.service: airtrail
+      traefik.http.routers.airtrail.tls.certresolver: myresolver
+      # Local domain
+      traefik.http.routers.airtrail-local-insecure.rule: Host(`airtrail.${LOCAL_DOMAIN}`)
+      traefik.http.routers.airtrail-local-insecure.entrypoints: web
+      traefik.http.routers.airtrail-local-insecure.service: airtrail
+      traefik.http.routers.airtrail-local-insecure.middlewares: airtrail-web-redirect
+      # Local domain secure
+      traefik.http.routers.airtrail-local.rule: Host(`airtrail.${LOCAL_DOMAIN}`)
+      traefik.http.routers.airtrail-local.entrypoints: websecure
+      traefik.http.routers.airtrail-local.service: airtrail
+      traefik.http.routers.airtrail-local.tls: true
+      runtipi.managed: true
+
+volumes:
+  db:

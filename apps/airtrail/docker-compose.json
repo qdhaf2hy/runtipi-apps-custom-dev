@@ -1,0 +1,43 @@
+{
+  "services": [
+    {
+      "name": "airtrail-postgres",
+      "image": "postgres:17-alpine",
+      "environment": {
+        "DB_URL": "postgres://airtrail:${POSTGRES_PASSWORD}@airtrail-postgres:5432/airtrail",
+        "POSTGRES_DB": "airtrail",
+        "POSTGRES_USER": "airtrail",
+        "POSTGRES_PASSWORD": "${DB_PASSWORD}"
+      },
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/data/db",
+          "containerPath": "/var/lib/postgresql/data",
+          "readOnly": false,
+          "shared": false,
+          "private": false
+        }
+      ],
+      "healthCheck": {
+        "test": "pg_isready -U ${DB_USERNAME} -d ${DB_DATABASE_NAME}",
+        "interval": "5s",
+        "timeout": "5s",
+        "retries": 5
+      }
+    },
+    {
+      "name": "airtrail",
+      "image": "johly/airtrail:2.4.1",
+      "environment": {
+        "ORIGIN": "http://localhost:${APP_PORT}",
+        "DB_URL": "postgres://airtrail:${POSTGRES_PASSWORD}@airtrail-postgres:5432/airtrail"
+      },
+      "dependsOn": {
+        "airtrail-postgres": {
+          "condition": "service_healthy"
+        }
+      },
+      "isMain": true
+    }
+  ]
+}
