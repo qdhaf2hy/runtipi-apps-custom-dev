@@ -20,11 +20,11 @@
       "type": "text",
       "label": "App user email",
       "required": true,
-      "min": 100,
+      "min": 10,
       "env_variable": "APP_USER_EMAIL"
     },
     {
-      "type": "text",
+      "type": "password",
       "label": "App user password",
       "required": true,
       "min": 5,
