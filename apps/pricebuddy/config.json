@@ -1,0 +1,51 @@
+{
+  "$schema": "../app-info-schema.json",
+  "name": "PriceBuddy",
+  "id": "pricebuddy",
+  "available": true,
+  "short_desc": "PriceBuddy is a web application that allows users to compare prices of products from different online retailers.",
+  "author": "Jeremy Graham",
+  "port": 1634,
+  "categories": ["utilities"],
+  "description": "PriceBuddy is an open source, self-hostable, web application that allows users to compare prices of products from different online retailers.",
+  "tipi_version": 1,
+  "version": "v1.0.39",
+  "website": "https://pricebuddy.jez.me/",
+  "source": "https://github.com/jez500/pricebuddy",
+  "exposable": true,
+  "dynamic_config": true,
+  "supported_architectures": ["arm64", "amd64"],
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "App user email",
+      "required": true,
+      "min": 100,
+      "env_variable": "APP_USER_EMAIL"
+    },
+    {
+      "type": "text",
+      "label": "App user email",
+      "required": true,
+      "min": 5,
+      "env_variable": "APP_USER_EMAIL"
+    },
+    {
+      "type": "random",
+      "label": "Database password",
+      "required": true,
+      "min": 32,
+      "env_variable": "DB_PASSWORD"
+    },
+    {
+      "type": "random",
+      "label": "Database root password",
+      "required": true,
+      "min": 32,
+      "env_variable": "DB_ROOT_PASSWORD"
+    }
+
+  ],
+  "created_at": 1749373754267,
+  "updated_at": 1749373754267
+}
