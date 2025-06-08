@@ -25,10 +25,10 @@
     },
     {
       "type": "text",
-      "label": "App user email",
+      "label": "App user password",
       "required": true,
       "min": 5,
-      "env_variable": "APP_USER_EMAIL"
+      "env_variable": "APP_USER_PASSWORD"
     },
     {
       "type": "random",
