@@ -1,3 +1,4 @@
+version: "3.9"
 services:
   pricebuddy:
     build:
@@ -6,6 +7,7 @@ services:
     image: jez500/pricebuddy:latest
     ports:
       - ${APP_PORT}:80
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/storage:/app/storage
       - ${APP_DATA_DIR}/data/.env:/app/.env
@@ -48,7 +50,7 @@ services:
       traefik.http.routers.pricebuddy-local.entrypoints: websecure
       traefik.http.routers.pricebuddy-local.service: pricebuddy
       traefik.http.routers.pricebuddy-local.tls: true
-      runtipi.managed: true    
+      runtipi.managed: true
 
   database:
     image: mysql:8.2
@@ -57,6 +59,7 @@ services:
       MYSQL_USER: pricebuddy
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+    restart: unless-stopped
     volumes:
       - ${APP_DATA_DIR}/data/database:/var/lib/mysql
     networks:
@@ -66,14 +69,12 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-      start_period: 1m
 
   scraper:
     image: amerkurev/scrapper:latest
+    restart: unless-stopped
     networks:
       - tipi_main_network
-    ports:
-      - 3030:3000 # Optional, if you want to access the scrapper api from the host machine
 
 volumes:
   storage:

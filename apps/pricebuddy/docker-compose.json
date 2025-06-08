@@ -64,8 +64,7 @@
     },
     {
       "name": "scraper",
-      "image": "amerkurev/scrapper:latest",
-      "internalPort": 3000
+      "image": "amerkurev/scrapper:latest"
     }
   ]
 }
