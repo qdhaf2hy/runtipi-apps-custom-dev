@@ -1,0 +1,43 @@
+{
+  "$schema": "../app-info-schema.json",
+  "name": "Journey Cloud Sync",
+  "port": 8318,
+  "available": true,
+  "exposable": true,
+  "dynamic_config": true,
+  "id": "journey-cloud-sync",
+  "tipi_version": 1,
+  "version": "0.1.0-alpha04",
+  "description": "Journey is a self-hosted personal journal and data synchronization platform. It provides an API, media service, Typesense search, Redis caching, and MongoDB storage. This package runs the complete self-hosted stack, including the main sync service, media processor, database, and search engine.",
+  "short_desc": "Self-hosted personal journal & sync platform.",
+  "author": "JourneyCloud",
+  "categories": [],
+  "source": "https://github.com/JourneyCloud/journey",
+  "form_fields": [
+    {
+      "type": "text",
+      "label": "Signed Secret",
+      "placeholder": "random_alphanumeric",
+      "env_variable": "JOURNEY_SIGNED_SECRET",
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "AdminJS Cookie Password",
+      "placeholder": "random_alphanumeric",
+      "env_variable": "JOURNEY_COOKIE_PASSWORD",
+      "required": true
+    },
+    {
+      "type": "text",
+      "label": "Typesense API Key",
+      "placeholder": "xyz",
+      "env_variable": "JOURNEY_TYPESENSE_API_KEY",
+      "required": true
+    }
+  ],
+  "supported_architectures": ["amd64"],
+  "created_at": 1765146537607,
+  "updated_at": 1765146537607,
+  "min_tipi_version": "4.5.0"
+}

@@ -1,0 +1,177 @@
+{
+  "$schema": "https://schemas.runtipi.io/v2/dynamic-compose.json",
+  "schemaVersion": 2,
+  "services": [
+    {
+      "name": "journey-service",
+      "image": "journeycloud/journey-sync-self-hosted:0.1.0-alpha04",
+      "internalPort": 8318,
+      "isMain": true,
+      "entrypoint": "npm run launch",
+      "environment": [
+        {
+          "key": "EXPRESS_SERVER_PORT",
+          "value": "8080" 
+        },
+        {
+          "key": "REDIS_PORT",
+          "value": "6379" 
+        },
+        {
+          "key": "DISABLE_SSL",
+          "value": "NO" 
+        },
+        {
+          "key": "DOMAIN",
+          "value": "${APP_DOMAIN}" 
+        },
+        {
+          "key": "ROOT_MONGO_DB_URL",
+          "value": "mongodb://root:password@journey-mongodb:27017" 
+        },
+        {
+          "key": "MONGO_DB_URL",
+          "value": "mongodb://user:password@journey-mongodb:27017/journey" 
+        },
+        {
+          "key": "REDIS_URL",
+          "value": "redis://journey-redis:6379" 
+        },
+        {
+          "key": "FS_PATH",
+          "value": "/mnt/data" 
+        },
+        {
+          "key": "SIGNED",
+          "value": "${JOURNEY_SIGNED_SECRET}" 
+        },
+        {
+          "key": "ADMIN_JS_COOKIE_PASSWORD",
+          "value": "${JOURNEY_COOKIE_PASSWORD}" 
+        },
+        {
+          "key": "TYPESENSE_HOST",
+          "value": "journey-typesense" 
+        },
+        {
+          "key": "TYPESENSE_PORT",
+          "value": "8108" 
+        },
+        {
+          "key": "TYPESENSE_PROTOCOL",
+          "value": "http" 
+        },
+        {
+          "key": "TYPESENSE_API_KEY",
+          "value": "${JOURNEY_TYPESENSE_API_KEY}" 
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/journey-fs",
+          "containerPath": "/mnt/data"
+        }
+      ]
+    },
+    {
+      "name": "journey-media",
+      "image": "journeycloud/journey-sync-self-hosted",
+      "entrypoint": "npm run launchMedia",
+      "environment": [
+        {
+          "key": "REDIS_PORT",
+          "value": "6379"
+        },
+        {
+          "key": "DISABLE_SSL",
+          "value": "NO"
+        },
+        {
+          "key": "DOMAIN",
+          "value": "${APP_DOMAIN}"
+        },
+        {
+          "key": "ROOT_MONGO_DB_URL",
+          "value": "mongodb://root:password@journey-mongodb:27017"
+        },
+        {
+          "key": "MONGO_DB_URL",
+          "value": "mongodb://user:password@journey-mongodb:27017/journey"
+        },
+        {
+          "key": "REDIS_URL",
+          "value": "redis://journey-redis:6379"
+        },
+        {
+          "key": "FS_PATH",
+          "value": "/mnt/data"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/journey-fs",
+          "containerPath": "/mnt/data"
+        }
+      ],
+      "dependsOn": ["journey-service"]
+    },
+    {
+      "name": "journey-mongodb",
+      "image": "mongo:7.0",
+      "environment": [
+        {
+          "key": "MONGO_INITDB_ROOT_USERNAME",
+          "value": "root"
+        },
+        {
+          "key": "MONGO_INITDB_ROOT_PASSWORD",
+          "value": "password"
+        },
+        {
+          "key": "MONGO_INITDB_DATABASE",
+          "value": "journey"
+        },
+        {
+          "key": "TZ",
+          "value": "${TZ}"
+        }
+      ],
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/mongo",
+          "containerPath": "/data/db"
+        }
+      ]
+    },
+    {
+      "name": "journey-redis",
+      "image": "redis:7.2.4-alpine",
+      "command": "redis-server",
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/redis",
+          "containerPath": "/data"
+        }
+      ]
+    },
+    {
+      "name": "journey-typesense",
+      "image": "typesense/typesense:26.0",
+      "command": "--data-dir /data --api-key=${JOURNEY_TYPESENSE_API_KEY} --enable-cors",
+      "volumes": [
+        {
+          "hostPath": "${APP_DATA_DIR}/typesense",
+          "containerPath": "/data"
+        }
+      ]
+    }
+  ]
+}
