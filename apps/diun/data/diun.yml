@@ -1,0 +1,35 @@
+watch:
+  workers: 20
+  schedule: "0 0 * * *" # This is overridden by the Cron env if desired, but good as a fallback
+  firstCheckNotif: false
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    watchByDefault: true
+    # This regex excludes any tag containing rc, dev, beta, alpha, or unstable
+    filter: "^(?!(.*alpha|.*beta|.*dev|.*rc|.*unstable)).*$"
+
+  ssh:
+    - address: "REMOTE_1:22"
+      user: diun
+      keyFile: /keys/id_rsa_remote1
+      knownHostsFile: /keys/known_hosts
+    - address: "REMOTE_2:22"
+      user: diun
+      keyFile: /keys/id_rsa_remote2
+      knownHostsFile: /keys/known_hosts
+
+regfilters:
+  # Specific exclusions for images that shouldn't be updated
+  - name: "blocklist"
+    selector: "image"
+    pattern: "^(postgres:14|postgres:16\\.9|traefik:v3\\.6\\.14)$"
+    inclusive: false
+
+notif:
+  gotify:
+    endpoint: "http://localhost:8129" # Default, usually overridden by env vars in compose
+    token: "token"
+    priority: 1
+    timeout: 10s

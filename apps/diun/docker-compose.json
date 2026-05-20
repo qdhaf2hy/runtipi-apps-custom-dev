@@ -1,0 +1,54 @@
+{
+  "services": [
+    {
+      "name": "tailscale",
+      "image": "tailscale/tailscale:v1.96.5",
+      "hostname": "diun-scanner",
+      "restart": "unless-stopped",
+      "cap_add": ["NET_ADMIN", "SYS_MODULE"],
+      "volumes": [
+        {
+          "source": "${APP_DATA_DIR}/tailscale",
+          "target": "/var/lib/tailscale"
+        },
+        {
+          "source": "/dev/net/tun",
+          "target": "/dev/net/tun"
+        }
+      ],
+      "environment": {
+        "TS_AUTHKEY": "${TAILSCALE_AUTH_KEY}",
+        "TS_STATE_DIR": "/var/lib/tailscale"
+      }
+    },
+    {
+      "name": "diun",
+      "image": "crazymax/diun:4.31.0",
+      "restart": "unless-stopped",
+      "depends_on": ["tailscale"],
+      "network_mode": "service:tailscale",
+      "volumes": [
+        {
+          "source": "${APP_DATA_DIR}/config",
+          "target": "/config"
+        },
+        {
+          "source": "${APP_DATA_DIR}/keys",
+          "target": "/keys",
+          "read_only": true
+        },
+        {
+          "source": "/var/run/docker.sock",
+          "target": "/var/run/docker.sock"
+        }
+      ],
+      "environment": {
+        "TZ": "${TZ}",
+        "LOG_LEVEL": "info",
+        "DIUN_NOTIF_GOTIFY_ENDPOINT": "${GOTIFY_URL}",
+        "DIUN_NOTIF_GOTIFY_TOKEN": "${GOTIFY_TOKEN}",
+        "DIUN_WATCH_SCHEDULE": "${DIUN_CRON}"
+      }
+    }
+  ]
+}

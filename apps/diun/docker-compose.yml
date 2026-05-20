@@ -1,0 +1,33 @@
+services:
+  tailscale:
+    image: tailscale/tailscale:v1.96.5
+    container_name: diun-tailscale
+    hostname: diun-scanner
+    environment:
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+    volumes:
+      - ${APP_DATA_DIR}/tailscale:/var/lib/tailscale
+      - /dev/net/tun:/dev/net/tun
+    cap_add:
+      - NET_ADMIN
+      - SYS_MODULE
+    restart: unless-stopped
+
+  diun:
+    image: crazymax/diun:4.31.0
+    container_name: diun
+    restart: unless-stopped
+    network_mode: "service:tailscale"
+    depends_on:
+      - tailscale
+    environment:
+      - "TZ=${TZ}"
+      - "LOG_LEVEL=info"
+      - "LOG_JSON=false"
+      - "DIUN_NOTIF_GOTIFY_ENDPOINT=${GOTIFY_URL}"
+      - "DIUN_NOTIF_GOTIFY_TOKEN=${GOTIFY_TOKEN}"
+    volumes:
+      - "${APP_DATA_DIR}/config:/config"
+      - "${APP_DATA_DIR}/keys:/keys:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock"
